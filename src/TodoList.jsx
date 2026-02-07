@@ -21,14 +21,26 @@ const TodoList = () => {
 
     setTodos([
       ...todos,
-      { id: Date.now(), text: input }
+      { id: Date.now(), text: input, completed: false },
     ])
     setInput("")
   }
 
   const handleDelete = (id) => {
-  setTodos(todos.filter(todo => todo.id !== id))
+    setTodos(todos.filter(todo => todo.id !== id))
   }
+
+  const toggleComplete = (id) => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === id
+          ? { ...todo, completed: !todo.completed }
+          : todo
+      )
+    )
+  }
+
+  const completedCount = todos.filter(todo => todo.completed).length
 
   return (
     <section className={`app-container ${darkMode ? "dark" : ""}`}>
@@ -53,6 +65,10 @@ const TodoList = () => {
       <div className="card todo-section">
         <h3>My Tasks</h3>
 
+        <p className="todo-progress">
+          Todolist selesai {completedCount} / {todos.length}
+        </p>
+
         <div className="input-group">
           <input
             type="text"
@@ -67,14 +83,27 @@ const TodoList = () => {
 
         <ul className="todo-list">
           {todos.map((item) => (
-            <li key={item.id}>
+            <li
+              key={item.id}
+              className={item.completed ? "completed" : ""}
+            >
               <span>{item.text}</span>
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(item.id)}
-              >
-                Delete
-              </button>
+
+              <div>
+                <button
+                  className="complete-btn"
+                  onClick={() => toggleComplete(item.id)}
+                >
+                  {item.completed ? "Undo" : "Selesai"}
+                </button>
+
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
